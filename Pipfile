@@ -8,6 +8,7 @@ pylint = "*"
 mypy = "*"
 pytest = "*"
 hypothesis = "*"
+ipython = "*"
 
 [packages]
 
