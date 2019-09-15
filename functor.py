@@ -6,7 +6,7 @@ import abc
 from functools import partial
 from typing import Generic, TypeVar, Callable
 
-from utils import const
+from utils import const, compose
 
 T_co = TypeVar('T_co', covariant=True)
 
@@ -21,4 +21,4 @@ class Functor(Generic[T_co], metaclass=abc.ABCMeta):
 
     def map_replace(self, value: A) -> Functor[A]:
         """The <$ operator"""
-        return self.fmap(const(value))
+        return compose(self.fmap, const)(value)
