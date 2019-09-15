@@ -17,7 +17,7 @@ class Functor(Generic[T_co], metaclass=abc.ABCMeta):
     """docstring"""
 
     @abc.abstractmethod
-    def fmap(self, func: Callable[..., B]) -> Functor[A]:
+    def fmap(self, func: Callable[..., B]) -> Functor[B]:
         """fmap"""
 
     def map_replace(self, value: A) -> Functor[A]:
