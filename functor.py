@@ -11,13 +11,12 @@ from utils import const
 T_co = TypeVar('T_co', covariant=True)
 
 A = TypeVar('A')
-B = TypeVar('B')
 
 class Functor(Generic[T_co], metaclass=abc.ABCMeta):
     """docstring"""
 
     @abc.abstractmethod
-    def fmap(self, func: Callable[..., B]) -> Functor[B]:
+    def fmap(self, func: Callable[..., A]) -> Functor[A]:
         """fmap"""
 
     def map_replace(self, value: A) -> Functor[A]:
