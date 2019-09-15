@@ -47,4 +47,3 @@ def lift_a_2(func: Callable[[A, B], C], fa: Ap[A], fb: Ap[B]) -> Ap[C]:
 @curry
 def lift_a_3(func: Callable[[A, B, C], D], fa: Ap[A], fb: Ap[B], fc: Ap[C]) -> Ap[D]:
     return fc.amap(lift_a_2(func, fa, fb))
-
