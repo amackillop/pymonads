@@ -1,1 +1,1 @@
-Well typed monads in python
+Well typed functional abstractions in python.
