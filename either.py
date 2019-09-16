@@ -1,19 +1,22 @@
+"""
+The Either monad. Inspired by Haskell as a way to handle errors without having
+to raise exceptions.
+"""
+
 from __future__ import annotations
 
 import abc
 from dataclasses import dataclass, replace
 from typing import TypeVar, Generic, Callable, Union, Any
 
-A = TypeVar('A')
-B = TypeVar('B')
-T = TypeVar('T')
-E = TypeVar('E')
-
 from monad import Monad
 from applicative import Applicative
 
-class Either(Monad, Generic[E, T], metaclass=abc.ABCMeta):
-    """Etiher Monad"""
+A = TypeVar('A')
+B = TypeVar('B')
+
+class Either(Monad, metaclass=abc.ABCMeta):
+    """The either base class. Subtypes are either Left or Right."""
 
     @staticmethod
     def pure(value: A) -> Right[A]:
@@ -24,7 +27,7 @@ class Either(Monad, Generic[E, T], metaclass=abc.ABCMeta):
 
 @dataclass(frozen=True, repr=False)
 class Left(Either, Generic[A]):
-    """"""
+    """Some representation of an error. Further computations will no longer happen."""
     value: A
 
     def fmap(self, func: Callable[..., B]) -> Left[A]:
@@ -39,7 +42,7 @@ class Left(Either, Generic[A]):
 
 @dataclass(frozen=True, repr=False)
 class Right(Either, Generic[B]):
-    """"""
+    """A successful result that will propagate."""
     value: B
 
     def fmap(self, func: Callable[..., A]) -> Right[A]:
