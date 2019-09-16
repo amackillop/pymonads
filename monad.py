@@ -23,13 +23,15 @@ class Monad(Applicative, Generic[T_co], metaclass=abc.ABCMeta):
         """m a -> (a -> m b) -> m b"""
 
     def __or__(self, func: Callable[..., Monad[B]]) -> Monad[B]:
+        """Allows the use of `|` to call flat_map."""
         return self.flat_map(func)
 
     def __rshift__(self, mb: Monad[B]) -> Monad[B]:
+        """Allows the use of `>>` to sequence operations, ignoring the first arg."""
         return self.flat_map(lambda _: mb)
 
     def map(self, func: Callable[[A], B]) -> Monad[B]:
-        """m a -> (a -> b) -> m b"""
+        """Map over values in some monad."""
         def a_to_mb(some_a: A) -> Monad[B]:
             return compose(self.pure, func)(some_a)
 

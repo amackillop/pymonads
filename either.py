@@ -11,7 +11,6 @@ from typing import TypeVar, Generic, Callable, Union, Any, Iterable, Iterator
 
 from monad import Monad
 from applicative import Applicative
-
 from utils import curry
 
 A = TypeVar('A')
