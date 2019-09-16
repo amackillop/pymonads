@@ -18,6 +18,11 @@ D = TypeVar('D')
 class Applicative(Functor, Generic[T_co], metaclass=abc.ABCMeta):
     """An applicative functor"""
 
+    @property
+    @abc.abstractmethod
+    def value(self):
+        """"""
+
     @classmethod
     @abc.abstractmethod
     def pure(cls, value: A) -> Applicative[A]:

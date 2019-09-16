@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import abc
+from dataclasses import dataclass
 from typing import Generic, TypeVar, NewType, Callable
 
 from applicative import Applicative
