@@ -20,7 +20,7 @@ class Monad(Applicative, Generic[T_co], metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def flat_map(self, func: Callable[..., Monad[B]]) -> Monad[B]:
-        """m a -> (a -> m b) -> m b"""
+        """Monadic bind or the `>>=` operator."""
 
     def __or__(self, func: Callable[..., Monad[B]]) -> Monad[B]:
         """Allows the use of `|` to call flat_map."""
