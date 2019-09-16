@@ -50,23 +50,3 @@ class Right(Either, Generic[B]):
 
     def flat_map(self, func: Callable[..., Either[A, B]]) -> Either[A, B]:
         return func(self.value)
-
-a = Right(1)
-
-a.flat_map(lambda x: Left(3))
-
-# @dataclass(frozen=True, repr=False)
-# class Right(Either, Generic[T]):
-#     """"""
-#     value: T
-
-#     def fmap(self, func: Callable[..., B]) -> Right[B]:
-#         return Right(func(self.value))
-
-#     def amap(self, fab: Applicative[Callable[[A, B], B]]) -> Right[B]:
-#         return self.fmap(fab)
-
-#     def flat_map(self, func: Callable[..., Either[E, T]]) -> Either[E, T]:
-#         return func(self.value) 
-
-
