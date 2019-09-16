@@ -25,6 +25,7 @@ class Either(Monad, metaclass=abc.ABCMeta):
     def __repr__(self):
         return f'{self.__class__.__name__}({self.value})'
 
+
 @dataclass(frozen=True, repr=False)
 class Left(Either, Generic[A]):
     """Some representation of an error. Further computations will no longer happen."""
