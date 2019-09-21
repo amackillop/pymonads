@@ -1,5 +1,5 @@
 .*
 !.gitignore
 src/pymonads.egg-info/
-src/build/
-src/dist/
+build/
+dist/
