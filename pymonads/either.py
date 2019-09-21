@@ -20,6 +20,7 @@ C = TypeVar('C')
 E = TypeVar('E')
 T = TypeVar('T')
 
+
 @dataclass(frozen=True)
 class Left(Monad[E]):
     """Some representation of an error. Further computations will no longer happen."""
