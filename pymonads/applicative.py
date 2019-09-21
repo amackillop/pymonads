@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import abc
-from typing import Generic, TypeVar, Callable
+from dataclasses import dataclass
+from typing import Generic, TypeVar, Callable, Any
 
 from pymonads.functor import Functor
 from pymonads.utils import identity, curry, compose, const, flip
@@ -15,12 +16,19 @@ B = TypeVar('B')
 C = TypeVar('C')
 D = TypeVar('D')
 
+Func = TypeVar('Func', bound=Callable[..., Any])
+
+# @dataclass(frozen=True)
 class Applicative(Functor, Generic[T_co], metaclass=abc.ABCMeta):
     """An applicative functor"""
-
-    @classmethod
+    
+    @property
     @abc.abstractmethod
-    def pure(cls, value: A) -> Applicative[A]:
+    def value(self) -> Any:
+        """Some value within the Applicative"""
+
+    @abc.abstractmethod
+    def pure(value: A) -> Applicative[A]:
         """"""
 
     @abc.abstractmethod

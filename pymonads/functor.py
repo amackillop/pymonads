@@ -15,6 +15,11 @@ A = TypeVar('A')
 class Functor(Generic[T_co], metaclass=abc.ABCMeta):
     """docstring"""
 
+    @property
+    @abc.abstractmethod
+    def value(self) -> T_co:
+        """Some value within the Functor"""
+
     @abc.abstractmethod
     def fmap(self, func: Callable[..., A]) -> Functor[A]:
         """fmap"""

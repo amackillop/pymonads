@@ -20,21 +20,13 @@ C = TypeVar('C')
 E = TypeVar('E')
 T = TypeVar('T')
 
-class Either(Monad, Generic[E, T], metaclass=abc.ABCMeta):
-    """The Either base class. Subtypes are either Left or Right."""
-
-    @staticmethod
-    def pure(value: A) -> Right[A]:
-        return Right(value)
-
-    def __repr__(self):
-        return f'{self.__class__.__name__}({self.value})'
-
-
 @dataclass(frozen=True, repr=False)
-class Left(Either, Generic[E]):
+class Left(Monad, Generic[E]):
     """Some representation of an error. Further computations will no longer happen."""
     value: E
+
+    def pure(value: A) -> Left[A]:
+        return Left(value)
 
     def fmap(self, func: Callable[..., B]) -> Left[E]:
         return self
@@ -47,33 +39,41 @@ class Left(Either, Generic[E]):
 
 
 @dataclass(frozen=True, repr=False)
-class Right(Either, Generic[T]):
+class Right(Monad, Generic[T]):
     """A successful result that will propagate."""
     value: T
+
+    def pure(value: B) -> Right[B]:
+        return Right(value)
 
     def fmap(self, func: Callable[..., A]) -> Right[A]:
         return Right(func(self.value))
 
-    def amap(self, fab: Applicative[Callable[..., A]]) -> Right[A]:
+    def amap(self, fab: Applicative[A]) -> Right[A]:
         return self.fmap(fab.value)
 
-    def flat_map(self, func: Callable[..., Either[A, B]]) -> Either[A, B]:
+    def flat_map(self, func: Callable[..., Me[B]]) -> Me[B]:
         return func(self.value)
 
+Either = Union[Left[A], Right[B]]
+Me = Monad[Either[A, B]]
 
-def is_left(either: Either[A, B]) -> bool:
+def pure(value: B) -> Right[B]:
+    return Right(value)
+
+def is_left(either: Either) -> bool:
     return isinstance(either, Left)
 
-def is_right(either: Either[A, B]) -> bool:
+def is_right(either: Either) -> bool:
     return isinstance(either, Right)
 
 @curry
-def either(func_left: Callable[[A], C], func_right: Callable[[B], C], either: Either[A, B]) -> C:
+def either(func_left: Callable[[A], C], func_right: Callable[[B], C], either: Union[Left, Right]) -> C:
     val = either.value
     return func_right(val) if is_right(either) else func_left(val)
 
-def lefts(eithers: Iterable[Either[A, B]]) -> Iterator[A]:
-    return (either.value for either in eithers if is_left(either))
+def lefts(eithers: Iterable[Either]) -> Iterator[A]:
+    return (either.value() for either in eithers if is_left(either))
 
-def rights(eithers: Iterable[Either[A, B]]) -> Iterator[A]:
-    return (either.value for either in eithers if is_right(either))
+def rights(eithers: Iterable[Either]) -> Iterator[B]:
+    return (either.value() for either in eithers if is_right(either))
