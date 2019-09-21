@@ -20,28 +20,28 @@ C = TypeVar('C')
 E = TypeVar('E')
 T = TypeVar('T')
 
-@dataclass(frozen=True, repr=False)
-class Left(Monad, Generic[E]):
+@dataclass(frozen=True)
+class Left(Monad[A]):
     """Some representation of an error. Further computations will no longer happen."""
-    value: E
+    value: A
 
     def pure(value: A) -> Left[A]:
         return Left(value)
 
-    def fmap(self, func: Callable[..., B]) -> Left[E]:
+    def fmap(self, func: Callable[..., B]) -> Left[A]:
         return self
 
-    def amap(self, fab: Applicative[Callable[..., B]]) -> Left[E]:
+    def amap(self, fab: Applicative[Callable[..., B]]) -> Left[A]:
         return self
 
-    def flat_map(self, func: Callable[..., Monad[B]]) -> Left[E]:
+    def flat_map(self, func: Callable[[A], Monad[A]]) -> Left[A]:
         return self
 
 
 @dataclass(frozen=True, repr=False)
-class Right(Monad, Generic[T]):
+class Right(Monad[B]):
     """A successful result that will propagate."""
-    value: T
+    value: B
 
     def pure(value: B) -> Right[B]:
         return Right(value)
@@ -52,7 +52,7 @@ class Right(Monad, Generic[T]):
     def amap(self, fab: Applicative[A]) -> Right[A]:
         return self.fmap(fab.value)
 
-    def flat_map(self, func: Callable[..., Me[B]]) -> Me[B]:
+    def flat_map(self, func: Callable[[B], Either[A, B]]) -> Either[A, B]:
         return func(self.value)
 
 Either = Union[Left[A], Right[B]]
