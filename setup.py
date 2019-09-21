@@ -8,4 +8,4 @@ setup(name='pymonads',
       author_email='austin.mackillop@gmail.com',
       license='MIT',
       packages=find_packages(exclude=('tests', 'docs')),
-      zip_safe=True)
+      zip_safe=False)
