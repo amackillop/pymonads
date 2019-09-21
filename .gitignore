@@ -3,3 +3,4 @@
 pymonads.egg-info/
 build/
 dist/
+build_dist.sh
