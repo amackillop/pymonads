@@ -1,0 +1,13 @@
+README.txt
+setup.py
+src/pymonads/__init__.py
+src/pymonads/applicative.py
+src/pymonads/either.py
+src/pymonads/functor.py
+src/pymonads/monad.py
+src/pymonads/utils.py
+src/pymonads.egg-info/PKG-INFO
+src/pymonads.egg-info/SOURCES.txt
+src/pymonads.egg-info/dependency_links.txt
+src/pymonads.egg-info/top_level.txt
+src/pymonads.egg-info/zip-safe
