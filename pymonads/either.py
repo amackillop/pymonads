@@ -24,25 +24,33 @@ T = TypeVar('T')
 @dataclass(frozen=True)
 class Left(Monad[E]):
     """Some representation of an error. Further computations will no longer happen."""
-    value: E
+    _value: E
+
+    @property
+    def value(self):
+        return self._value
 
     def pure(self, value: A) -> Left[A]:
         return Left(value)
 
-    def fmap(self, func: Callable[..., B]) -> Left[E]:
+    def fmap(self, _: Callable[..., B]) -> Left[E]:
         return self
 
-    def amap(self, fab: Applicative[Callable[..., B]]) -> Left[E]:
+    def amap(self, _: Applicative[Callable[..., B]]) -> Left[E]:
         return self
 
-    def flat_map(self, func: Callable[..., Monad[B]]) -> Left[E]:
+    def flat_map(self, _: Callable[..., Monad[B]]) -> Left[E]:
         return self
 
 
 @dataclass(frozen=True, repr=False)
 class Right(Monad[T]):
     """A successful result that will propagate."""
-    value: T
+    _value: T
+
+    @property
+    def value(self):
+        return self._value
 
     def pure(self, value: A) -> Right[A]:
         return Right(value)
@@ -61,15 +69,15 @@ Either = Union[Left[E], Right[T]]
 def pure(value: T) -> Right[T]:
     return Right(value)
 
-def is_left(either: Either[E, A]) -> bool:
-    return isinstance(either, Left)
+def is_left(either_: Either[E, A]) -> bool:
+    return isinstance(either_, Left)
 
-def is_right(either: Either[E, A]) -> bool:
-    return isinstance(either, Right)
+def is_right(either_: Either[E, A]) -> bool:
+    return isinstance(either_, Right)
 
 @curry
-def either(func_left: Callable[[E], C], func_right: Callable[[T], C], either: Either) -> C:
-    val = either.value
+def either(func_left: Callable[[E], C], func_right: Callable[[T], C], either_: Either) -> C:
+    val = either_.value
     return func_right(val) if is_right(either) else func_left(val)
 
 def lefts(eithers: Iterable[Either]) -> Iterator[A]:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import abc
 from dataclasses import dataclass
-from typing import Generic, TypeVar, NewType, Callable
+from typing import Generic, TypeVar, Callable, Any
 
 from pymonads.applicative import Applicative
 from pymonads.functor import Functor
@@ -18,7 +18,7 @@ class Monad(Applicative, Generic[T_co], metaclass=abc.ABCMeta):
     """Base class for Monad implementations"""
 
     @abc.abstractmethod
-    def flat_map(self, func) -> Monad[T_co]:
+    def flat_map(self, func: Callable[..., Any]) -> Any:
         """Monadic bind or the `>>=` operator."""
 
     def __or__(self, func: Callable[[A], Monad[T_co]]) -> Monad[T_co]:

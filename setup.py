@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='pymonads',
-      version='0.1.1',
+      version='0.1.3',
       description='Well typed functional programming abstactions in Python',
       url='http://github.com/amackillop/pymonads',
       author='Austin Mackillop',
