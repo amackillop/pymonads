@@ -9,6 +9,7 @@ pytest = "*"
 hypothesis = "*"
 ipython = "*"
 pylint = "*"
+twine = "*"
 
 [packages]
 
