@@ -21,59 +21,58 @@ E = TypeVar('E')
 T = TypeVar('T')
 
 @dataclass(frozen=True)
-class Left(Monad[A]):
+class Left(Monad[E]):
     """Some representation of an error. Further computations will no longer happen."""
-    value: A
+    value: E
 
-    def pure(value: A) -> Left[A]:
+    def pure(self, value: A) -> Left[A]:
         return Left(value)
 
-    def fmap(self, func: Callable[..., B]) -> Left[A]:
+    def fmap(self, func: Callable[..., B]) -> Left[E]:
         return self
 
-    def amap(self, fab: Applicative[Callable[..., B]]) -> Left[A]:
+    def amap(self, fab: Applicative[Callable[..., B]]) -> Left[E]:
         return self
 
-    def flat_map(self, func: Callable[[A], Monad[A]]) -> Left[A]:
+    def flat_map(self, func: Callable[..., Monad[B]]) -> Left[E]:
         return self
 
 
 @dataclass(frozen=True, repr=False)
-class Right(Monad[B]):
+class Right(Monad[T]):
     """A successful result that will propagate."""
-    value: B
+    value: T
 
-    def pure(value: B) -> Right[B]:
+    def pure(self, value: A) -> Right[A]:
         return Right(value)
 
-    def fmap(self, func: Callable[..., A]) -> Right[A]:
+    def fmap(self, func: Callable[[T], B]) -> Right[B]:
         return Right(func(self.value))
 
-    def amap(self, fab: Applicative[A]) -> Right[A]:
+    def amap(self, fab: Applicative[Callable[[T], B]]) -> Right[B]:
         return self.fmap(fab.value)
 
-    def flat_map(self, func: Callable[[B], Either[A, B]]) -> Either[A, B]:
+    def flat_map(self, func: Callable[[T], Either[E, B]]) -> Either[E, B]:
         return func(self.value)
 
-Either = Union[Left[A], Right[B]]
-Me = Monad[Either[A, B]]
+Either = Union[Left[E], Right[T]]
 
-def pure(value: B) -> Right[B]:
+def pure(value: T) -> Right[T]:
     return Right(value)
 
-def is_left(either: Either) -> bool:
+def is_left(either: Either[E, A]) -> bool:
     return isinstance(either, Left)
 
-def is_right(either: Either) -> bool:
+def is_right(either: Either[E, A]) -> bool:
     return isinstance(either, Right)
 
 @curry
-def either(func_left: Callable[[A], C], func_right: Callable[[B], C], either: Union[Left, Right]) -> C:
+def either(func_left: Callable[[E], C], func_right: Callable[[T], C], either: Either) -> C:
     val = either.value
     return func_right(val) if is_right(either) else func_left(val)
 
 def lefts(eithers: Iterable[Either]) -> Iterator[A]:
-    return (either.value() for either in eithers if is_left(either))
+    return (either.value for either in eithers if is_left(either))
 
 def rights(eithers: Iterable[Either]) -> Iterator[B]:
-    return (either.value() for either in eithers if is_right(either))
+    return (either.value for either in eithers if is_right(either))

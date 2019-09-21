@@ -28,11 +28,11 @@ class Applicative(Functor, Generic[T_co], metaclass=abc.ABCMeta):
         """Some value within the Applicative"""
 
     @abc.abstractmethod
-    def pure(value: A) -> Applicative[A]:
+    def pure(self, value: A) -> Applicative[A]:
         """"""
 
     @abc.abstractmethod
-    def amap(self, fab: Applicative[Callable[[A], B]]) -> Applicative[B]:
+    def amap(self, fab: Applicative[Callable[..., B]]) -> Applicative[B]:
         """<*>"""
 
     def sequence_right(self, fb: Applicative[B]) -> Applicative[B]:

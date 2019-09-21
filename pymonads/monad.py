@@ -21,13 +21,15 @@ class Monad(Applicative, Generic[T_co], metaclass=abc.ABCMeta):
     def flat_map(self, func: Callable[..., Monad[T_co]]) -> Monad[T_co]:
         """Monadic bind or the `>>=` operator."""
 
-    def __or__(self, func: Callable[..., Monad[T_co]]) -> Monad[T_co]:
+    def __or__(self, func: Callable[[A], Monad[T_co]]) -> Monad[T_co]:
         """Allows the use of `|` to call flat_map."""
         return self.flat_map(func)
 
-    def __rshift__(self, mb: Monad[T_co]) -> Monad[T_co]:
+    def __rshift__(self, mb: Monad[B]) -> Monad[T_co]:
         """Allows the use of `>>` to sequence operations, ignoring the first arg."""
-        return self.flat_map(lambda _: mb)
+        def return_mb(mb):
+            return mb
+        return self.flat_map(return_mb)
 
     def map(self, func: Callable[[A], T_co]) -> Monad[T_co]:
         """Map over values in some monad."""
