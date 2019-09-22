@@ -21,10 +21,13 @@ E = TypeVar('E')
 T = TypeVar('T')
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, repr=False)
 class Left(Monad[E]):
     """Some representation of an error. Further computations will no longer happen."""
     _value: E
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.value})'
 
     @property
     def value(self):
@@ -47,6 +50,9 @@ class Left(Monad[E]):
 class Right(Monad[T]):
     """A successful result that will propagate."""
     _value: T
+    
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self.value})'
 
     @property
     def value(self):
