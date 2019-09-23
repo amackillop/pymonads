@@ -72,11 +72,11 @@ def pure(value: T) -> Right[T]:
     return Right(value)
 
 
-def is_left(either_: Either[E, A]) -> bool:
+def is_left(either_: Either[E, T]) -> bool:
     return isinstance(either_, Left)
 
 
-def is_right(either_: Either[E, A]) -> bool:
+def is_right(either_: Either[E, T]) -> bool:
     return isinstance(either_, Right)
 
 
@@ -86,9 +86,9 @@ def either(func_left: Callable[[E], C], func_right: Callable[[T], C], either_: E
     return func_right(val) if is_right(either) else func_left(val)
 
 
-def lefts(eithers: Iterable[Either]) -> Iterator[A]:
+def lefts(eithers: Iterable[Either]) -> Iterator[E]:
     return (either.value for either in eithers if is_left(either))
 
 
-def rights(eithers: Iterable[Either]) -> Iterator[B]:
+def rights(eithers: Iterable[Either]) -> Iterator[T]:
     return (either.value for either in eithers if is_right(either))
