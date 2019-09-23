@@ -1,6 +1,5 @@
 .*
 !.gitignore
-pymonads.egg-info/
+*.egg-info/
 build/
 dist/
-build_dist.sh
