@@ -26,7 +26,8 @@ class Applicative(Functor, Generic[T_co], metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def value(self) -> Any:
         """Some value within the Applicative"""
-
+    
+    @classmethod
     @abc.abstractmethod
     def pure(self, value: A) -> Applicative[A]:
         """"""

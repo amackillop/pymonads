@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import abc
 from dataclasses import dataclass, replace
-from typing import TypeVar, Generic, Callable, Union, Any, Iterable, Iterator
+from typing import TypeVar, Generic, Callable, Union, Any, Iterable, Iterator, Type
 
 from pymonads.monad import Monad
 from pymonads.applicative import Applicative
@@ -19,6 +19,7 @@ C = TypeVar('C')
 
 E = TypeVar('E')
 T = TypeVar('T')
+U = TypeVar('U')
 
 @dataclass(frozen=True, repr=False)
 class _Either(Generic[T]):
@@ -33,57 +34,55 @@ class _Either(Generic[T]):
     def value(self):
         return self._value
 
+    @classmethod
+    def pure(self, value: T) -> Right[T]:
+        return Right(value)
+
 
 class Left(_Either, Monad[E]):
     """Some representation of an error. Further computations will no longer happen."""
 
-    def pure(self, value: A) -> Left[A]:
-        return Left(value)
-
-    def fmap(self, _: Callable[..., B]) -> Left[E]:
+    def fmap(self, _: Callable[[E], U]) -> Left[E]:
         return self
 
-    def amap(self, _: Applicative[Callable[..., B]]) -> Left[E]:
+    def amap(self, _: Applicative[Callable[[E], U]]) -> Left[E]:
         return self
 
-    def flat_map(self, _: Callable[..., Monad[B]]) -> Left[E]:
+    def flat_map(self, _: Callable[..., Monad[U]]) -> Left[E]:
         return self
 
 
 class Right(_Either, Monad[T]):
     """A successful result that will propagate."""
 
-    def pure(self, value: A) -> Right[A]:
-        return Right(value)
-
-    def fmap(self, func: Callable[[T], B]) -> Right[B]:
+    def fmap(self, func: Callable[[T], U]) -> Right[U]:
         return Right(func(self.value))
 
-    def amap(self, fab: Applicative[Callable[[T], B]]) -> Right[B]:
+    def amap(self, fab: Applicative[Callable[[T], U]]) -> Right[U]:
         return self.fmap(fab.value)
 
-    def flat_map(self, func: Callable[[T], Either[E, B]]) -> Either[E, B]:
+    def flat_map(self, func: Callable[[T], Either[U]]) -> Either[U]:
         return func(self.value)
 
 
-Either = Union[Left[E], Right[T]]
+Either = Monad[Union[Left[Any], Right[T]]]
 
 def pure(value: T) -> Right[T]:
-    return Right(value)
+    return _Either.pure(value)
 
 
-def is_left(either_: Either[E, T]) -> bool:
+def is_left(either_: Either[T]) -> bool:
     return isinstance(either_, Left)
 
 
-def is_right(either_: Either[E, T]) -> bool:
+def is_right(either_: Either[T]) -> bool:
     return isinstance(either_, Right)
 
 
 @curry
-def either(func_left: Callable[[E], C], func_right: Callable[[T], C], either_: Either) -> C:
+def either(left_func: Callable[[E], C], right_func: Callable[[T], C], either_: Either) -> C:
     val = either_.value
-    return func_right(val) if is_right(either) else func_left(val)
+    return right_func(val) if is_right(either_) else left_func(val)
 
 
 def lefts(eithers: Iterable[Either]) -> Iterator[E]:
