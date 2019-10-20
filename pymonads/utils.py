@@ -7,7 +7,7 @@ C = TypeVar('C')
 
 Func = TypeVar('Func', bound=Callable[..., Any])
 
-def curry(func: Func):
+def curry(func: Func) -> Callable[..., Any]:
     """Apply automatic currying to a python function"""
     @functools.wraps(func)
     def curried(*args, **kwargs):
