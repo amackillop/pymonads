@@ -35,8 +35,21 @@ class _Either(Generic[T]):
         return self._value
 
     @classmethod
-    def pure(self, value: T) -> Right[T]:
+    def pure(cls, value: T) -> Right[T]:
         return Right(value)
+
+    def is_left(self) -> bool:
+        return isinstance(self, Left)
+
+
+    def is_right(self) -> bool:
+        return isinstance(self, Right)
+
+    @curry
+    def either(self, left_func: Callable[[E], C], right_func: Callable[[T], C]) -> C:
+        val = self.value
+        return left_func(val) if self.is_left() else right_func(val)
+
 
 
 class Left(_Either, Monad[E]):
@@ -67,27 +80,9 @@ class Right(_Either, Monad[T]):
 
 Either = Monad[Union[Left[Any], Right[T]]]
 
-def pure(value: T) -> Right[T]:
-    return _Either.pure(value)
-
-
-def is_left(either_: Either[T]) -> bool:
-    return isinstance(either_, Left)
-
-
-def is_right(either_: Either[T]) -> bool:
-    return isinstance(either_, Right)
-
-
-@curry
-def either(left_func: Callable[[E], C], right_func: Callable[[T], C], either_: Either) -> C:
-    val = either_.value
-    return right_func(val) if is_right(either_) else left_func(val)
-
-
 def lefts(eithers: Iterable[Either]) -> Iterator[E]:
-    return (either.value for either in eithers if is_left(either))
+    return (either.value for either in eithers if either.is_left())
 
 
 def rights(eithers: Iterable[Either]) -> Iterator[T]:
-    return (either.value for either in eithers if is_right(either))
+    return (either.value for either in eithers if either.is_right())

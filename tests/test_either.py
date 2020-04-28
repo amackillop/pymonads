@@ -1,12 +1,12 @@
-from hypothesis import given, infer
-import hypothesis.strategies as st
 from typing import TypeVar
+from hypothesis import given
+import hypothesis.strategies as st
 
-import pymonads.tests.functor_laws as fl
-import pymonads.tests.applicative_laws as al
-from pymonads import Either, Right, Left
-from pymonads.either import pure, _Either
-from pymonads.utils import identity, compose
+import tests.functor_laws as fl
+import tests.applicative_laws as al
+from pymonads import Right, Left
+from pymonads.either import _Either
+from pymonads.applicative import pure
 
 A = TypeVar('A')
 B = TypeVar('B')
@@ -37,10 +37,10 @@ def test_either_obeys_identity_law(either):
 @given(x=st.integers())
 def test_either_is_homomorphic(x):
     f = lambda a: a * 4
-    assert al.applicative_preserves_function_application(_Either, f, x)
+    assert al.applicative_preserves_function_application(Right, f, x)
 
 @given(either=eithers_applicative(), x=st.integers())
 def test_either_obeys_interchangeability(either, x):
-    assert al.applicative_is_interchangeable(_Either, either, x)
+    assert al.applicative_is_interchangeable(either, x)
 
 # Test that Either obeys the Monad laws.

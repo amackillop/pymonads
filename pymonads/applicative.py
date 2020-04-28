@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-import abc
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Generic, TypeVar, Callable, Any
+from typing import Generic, TypeVar, Callable, Any, Type
 
 from pymonads.functor import Functor
 from pymonads.utils import identity, curry, compose, const, flip
@@ -19,20 +19,20 @@ D = TypeVar('D')
 Func = TypeVar('Func', bound=Callable[..., Any])
 
 # @dataclass(frozen=True)
-class Applicative(Functor, Generic[T_co], metaclass=abc.ABCMeta):
+class Applicative(Functor, Generic[T_co], ABC):
     """An applicative functor"""
     
     @property
-    @abc.abstractmethod
+    @abstractmethod
     def value(self) -> Any:
         """Some value within the Applicative"""
     
     @classmethod
-    @abc.abstractmethod
-    def pure(self, value: A) -> Applicative[A]:
+    @abstractmethod
+    def pure(cls, value: A) -> Applicative[A]:
         """"""
 
-    @abc.abstractmethod
+    @abstractmethod
     def amap(self, fab: Applicative[Callable[..., B]]) -> Applicative[B]:
         """<*>"""
 
@@ -56,3 +56,7 @@ def lift_a_2(func: Callable[[A, B], C], fa: Ap[A], fb: Ap[B]) -> Ap[C]:
 @curry
 def lift_a_3(func: Callable[[A, B, C], D], fa: Ap[A], fb: Ap[B], fc: Ap[C]) -> Ap[D]:
     return fc.amap(lift_a_2(func, fa, fb))
+
+def pure(applicative_class: Type(Applicative), value: A) -> Applicative[A]:
+    """"""
+    return applicative_class(value)
