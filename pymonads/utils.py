@@ -20,7 +20,7 @@ def identity(value: A) -> A:
     """The identity function"""
     return value
 
-def apply(func: Func, *args, **kwargs) -> Any:
+def apply(func: Func, *args, **kwargs) -> A:
     return func(*args, **kwargs)
 
 @curry

@@ -1,88 +1,79 @@
-"""
-The Either monad. Inspired by Haskell as a way to handle errors without having
-to raise exceptions.
-"""
-
 from __future__ import annotations
 
-import abc
-from dataclasses import dataclass, replace
+from abc import ABC, ABCMeta
+from dataclasses import dataclass
+from pymonads.functor import Functor
+from pymonads.applicative import Applicative
+from pymonads.monad import Monad
 from typing import TypeVar, Generic, Callable, Union, Any, Iterable, Iterator, Type
 
-from pymonads.monad import Monad
-from pymonads.applicative import Applicative
-from pymonads.utils import curry
+from numbers import Complex, Integral, Number
 
-A = TypeVar('A')
-B = TypeVar('B')
-C = TypeVar('C')
+from pymonads.utils import apply
 
-E = TypeVar('E')
-T = TypeVar('T')
-U = TypeVar('U')
 
-@dataclass(frozen=True, repr=False)
-class _Either(Generic[T]):
-    """Common code between Left and Right"""
+A = TypeVar("A")
+B = TypeVar("B")
 
-    _value: T  
+E = TypeVar("E")
+T_co = TypeVar("T_co", covariant=True)
 
-    def __repr__(self):
-        return f'{self.__class__.__name__}({self.value})'
 
-    @property
-    def value(self):
-        return self._value
+class _Either(Monad[T_co]):
+    """"""
 
     @classmethod
-    def pure(cls, value: T) -> Right[T]:
+    def pure(cls, value):
         return Right(value)
 
-    def is_left(self) -> bool:
-        return isinstance(self, Left)
 
+class Left(_Either, Generic[E]):
+    """"""
 
-    def is_right(self) -> bool:
-        return isinstance(self, Right)
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.value})"
 
-    @curry
-    def either(self, left_func: Callable[[E], C], right_func: Callable[[T], C]) -> C:
-        val = self.value
-        return left_func(val) if self.is_left() else right_func(val)
-
-
-
-class Left(_Either, Monad[E]):
-    """Some representation of an error. Further computations will no longer happen."""
-
-    def fmap(self, _: Callable[[E], U]) -> Left[E]:
+    def fmap(self, func: Callable[[A], B]) -> _Either[B]:
+        """"""
         return self
 
-    def amap(self, _: Applicative[Callable[[E], U]]) -> Left[E]:
+    def amap(self, fab: Applicative[Callable[[A], B]]) -> _Either[B]:
+        """"""
         return self
 
-    def flat_map(self, _: Callable[..., Monad[U]]) -> Left[E]:
+    def flat_map(self, func: Callable[[A], Monad[B]]) -> _Either[B]:
+        """"""
         return self
 
 
-class Right(_Either, Monad[T]):
-    """A successful result that will propagate."""
+class Right(_Either, Generic[T_co]):
+    """"""
 
-    def fmap(self, func: Callable[[T], U]) -> Right[U]:
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({self.value})"
+
+    def fmap(self, func: Callable[[T_co], B]) -> _Either[B]:
+        """"""
         return Right(func(self.value))
 
-    def amap(self, fab: Applicative[Callable[[T], U]]) -> Right[U]:
+    def amap(self, fab: Applicative[Callable[[T_co], B]]) -> _Either[B]:
+        """"""
         return self.fmap(fab.value)
 
-    def flat_map(self, func: Callable[[T], Either[U]]) -> Either[U]:
-        return func(self.value)
+    def flat_map(self, func: Callable[[A], Monad[B]]) -> _Either[B]:
+        """"""
+        return self
 
 
-Either = Monad[Union[Left[Any], Right[T]]]
+# Either = Union[Left[E], Right[T_co]]
 
-def lefts(eithers: Iterable[Either]) -> Iterator[E]:
-    return (either.value for either in eithers if either.is_left())
+# ThrowsError = Either[str, T]
 
+# a: Either[str, int] = Left("sss")
+# b: Either[str, float] = Right(8.)
 
-def rights(eithers: Iterable[Either]) -> Iterator[T]:
-    return (either.value for either in eithers if either.is_right())
+# def division(num: int, div: int) -> ThrowsError[float]:
+#     if div == 0:
+#         return Left("Error!")
+
+#     return Right(int(num/div))

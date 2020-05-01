@@ -10,30 +10,24 @@ from pymonads.functor import Functor
 from pymonads.utils import identity, curry, compose, const, flip
 
 T_co = TypeVar('T_co', covariant=True)
+T = TypeVar('T')
 
 A = TypeVar('A')
 B = TypeVar('B')
 C = TypeVar('C')
 D = TypeVar('D')
 
-Func = TypeVar('Func', bound=Callable[..., Any])
-
 # @dataclass(frozen=True)
-class Applicative(Functor, Generic[T_co], ABC):
+class Applicative(Functor[T_co], ABC):
     """An applicative functor"""
-    
-    @property
-    @abstractmethod
-    def value(self) -> Any:
-        """Some value within the Applicative"""
     
     @classmethod
     @abstractmethod
-    def pure(cls, value: A) -> Applicative[A]:
+    def pure(cls, value: A) -> Applicative[T_co]:
         """"""
 
     @abstractmethod
-    def amap(self, fab: Applicative[Callable[..., B]]) -> Applicative[B]:
+    def amap(self, fab: Applicative[Callable[[T_co], B]]) -> Applicative[B]:
         """<*>"""
 
     def sequence_right(self, fb: Applicative[B]) -> Applicative[B]:
@@ -57,6 +51,6 @@ def lift_a_2(func: Callable[[A, B], C], fa: Ap[A], fb: Ap[B]) -> Ap[C]:
 def lift_a_3(func: Callable[[A, B, C], D], fa: Ap[A], fb: Ap[B], fc: Ap[C]) -> Ap[D]:
     return fc.amap(lift_a_2(func, fa, fb))
 
-def pure(applicative_class: Type(Applicative), value: A) -> Applicative[A]:
+def pure(applicative_class: Type[Applicative], value: A) -> Applicative[A]:
     """"""
-    return applicative_class(value)
+    return applicative_class.pure(value)

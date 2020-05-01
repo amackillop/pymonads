@@ -11,8 +11,8 @@ A = TypeVar('A')
 B = TypeVar('B')
 C = TypeVar('C')
 
-def functor_preserves_identity_morphisms(functor: Functor[int]) -> bool:
+def functor_preserves_identity_morphisms(functor: Functor[A]) -> bool:
     return functor.fmap(identity) == identity(functor)
 
-def functor_preserves_composition_of_morphisms(functor: Functor, f: Callable[[B], C], g: Callable[[A], B]) -> bool:
+def functor_preserves_composition_of_morphisms(functor: Functor[A], f: Callable[[B], C], g: Callable[[A], B]) -> bool:
     return functor.fmap(compose(f, g)) == functor.fmap(g).fmap(f)

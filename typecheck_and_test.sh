@@ -1,1 +1,1 @@
-mypy pymonads && pytest pymonads
+mypy pymonads && pytest

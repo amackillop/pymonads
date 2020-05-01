@@ -4,12 +4,11 @@ import hypothesis.strategies as st
 
 import tests.functor_laws as fl
 import tests.applicative_laws as al
-from pymonads import Right, Left
-from pymonads.either import _Either
-from pymonads.applicative import pure
+from pymonads.either import Right, Left
 
 A = TypeVar('A')
 B = TypeVar('B')
+
 
 def eithers() -> st.SearchStrategy:
     return st.one_of(st.builds(Right, st.integers()), st.builds(Left, st.integers()))

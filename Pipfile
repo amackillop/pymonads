@@ -11,6 +11,7 @@ ipython = "*"
 pylint = "*"
 twine = "*"
 black = "*"
+typed-ast = "*"
 
 [packages]
 
