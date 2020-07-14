@@ -7,17 +7,19 @@ from pymonads.applicative import Applicative
 from pymonads.utils import compose
 
 T = TypeVar('T')
-T_co = TypeVar('T_co', covariant=True)
-U_co = TypeVar('U_co', covariant=True)
-
 A = TypeVar('A')
 B = TypeVar('B')
 
-class Monad(Applicative[T_co], ABC):
+class Monad(Applicative[A], ABC):
     """Base class for Monad implementations"""
 
+    @classmethod
     @abstractmethod
-    def flat_map(self, func: Callable[[A], Monad[B]]) -> Monad[B]:
+    def pure(cls, value: A) -> Monad[A]:
+        """"""
+
+    @abstractmethod
+    def flat_map(self, func):
         """Monadic bind or the `>>=` operator."""
 
     def __or__(self, func: Callable[[A], Monad[B]]) -> Monad[B]:

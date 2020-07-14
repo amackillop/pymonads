@@ -9,7 +9,6 @@ from typing import Generic, TypeVar, Callable, Any, Type
 from pymonads.functor import Functor
 from pymonads.utils import identity, curry, compose, const, flip
 
-T_co = TypeVar('T_co', covariant=True)
 T = TypeVar('T')
 
 A = TypeVar('A')
@@ -17,17 +16,16 @@ B = TypeVar('B')
 C = TypeVar('C')
 D = TypeVar('D')
 
-# @dataclass(frozen=True)
-class Applicative(Functor[T_co], ABC):
+class Applicative(Functor[A], ABC):
     """An applicative functor"""
     
     @classmethod
     @abstractmethod
-    def pure(cls, value: A) -> Applicative[T_co]:
+    def pure(cls, value: A) -> Applicative[A]:
         """"""
 
     @abstractmethod
-    def amap(self, fab: Applicative[Callable[[T_co], B]]) -> Applicative[B]:
+    def amap(self, fab: Applicative[Callable[[A], B]]) -> Applicative[B]:
         """<*>"""
 
     def sequence_right(self, fb: Applicative[B]) -> Applicative[B]:

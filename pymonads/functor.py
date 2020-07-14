@@ -11,14 +11,13 @@ from dataclasses import dataclass
 
 from pymonads.utils import const, compose
 
-A_co = TypeVar("A_co", covariant=True)
 T = TypeVar("T")
 A = TypeVar("A")
 B = TypeVar("B")
 
 
 @dataclass(frozen=True, repr=False)
-class DataClassMixin(Generic[A_co]):
+class DataClassMixin(Generic[A]):
     """A dataclass mixin.
     
     This is required to get around a mypy error.
@@ -26,18 +25,14 @@ class DataClassMixin(Generic[A_co]):
     See: https://github.com/python/mypy/issues/5374#issuecomment-568335302
     """
 
-    value: A_co
+    value: A
 
 
-class Functor(DataClassMixin, Generic[A_co], ABC):
+class Functor(DataClassMixin, Generic[A], ABC):
     """docstring"""
 
-    # @abstractproperty
-    # def value(self) -> A_co:
-    #     """Some value within the Functor"""
-
     @abstractmethod
-    def fmap(self, func: Callable[[A_co], B]) -> Functor[B]:
+    def fmap(self, func: Callable[[A], B]) -> Functor[B]:
         """fmap"""
 
     def map_replace(self, value: B) -> Functor[B]:
