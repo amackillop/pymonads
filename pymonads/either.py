@@ -1,13 +1,8 @@
 from __future__ import annotations
 
-from abc import ABC, ABCMeta
-from dataclasses import dataclass
-from pymonads.functor import Functor
 from pymonads.applicative import Applicative
 from pymonads.monad import Monad
-from typing import TypeVar, Generic, Callable, Union, Any, Iterable, Iterator, Type
-
-from numbers import Complex, Integral, Number
+from typing import TypeVar, Generic, Callable, Union, Iterable, Iterator
 
 from pymonads.utils import curry
 
@@ -18,6 +13,7 @@ C = TypeVar("C")
 
 E = TypeVar("E")
 T = TypeVar("T")
+
 
 class _Either(Monad[A]):
     """"""
@@ -34,7 +30,6 @@ class _Either(Monad[A]):
 
     def is_right(self) -> bool:
         return isinstance(self, Right)
-
 
 
 class Left(_Either, Generic[A]):
@@ -71,10 +66,14 @@ class Right(_Either, Generic[A]):
 
 Either = Union[Left[E], Right[T]]
 
+
 @curry
-def either(either_: Either, left_func: Callable[[E], C], right_func: Callable[[T], C]) -> C:
+def either(
+    either_: Either, left_func: Callable[[E], C], right_func: Callable[[T], C]
+) -> C:
     val = either_.value
     return left_func(val) if either_.is_left() else right_func(val)
+
 
 def lefts(eithers: Iterable[Either]) -> Iterator[E]:
     return (either.value for either in eithers if either.is_left())
@@ -82,17 +81,3 @@ def lefts(eithers: Iterable[Either]) -> Iterator[E]:
 
 def rights(eithers: Iterable[Either]) -> Iterator[T]:
     return (either.value for either in eithers if either.is_right())
-
-
-ThrowsError = Either[str, T]
-
-a: Either[str, int] = Left("sss")
-b: Either[str, float] = Right(8)
-
-
-# def division(num: int, div: int) -> Either[str, int]:
-#     if div == 0:
-#         return Left("Error!")
-
-#     result = num / div
-#     return Right(result)

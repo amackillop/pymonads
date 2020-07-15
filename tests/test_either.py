@@ -6,7 +6,7 @@ import tests.functor_laws as fl
 import tests.applicative_laws as al
 import tests.monad_laws as ml
 
-from pymonads.either import Right, Left
+from pymonads.either import Right, Left, lefts, rights, either
 
 A = TypeVar("A")
 B = TypeVar("B")
@@ -52,8 +52,6 @@ def test_either_obeys_interchangeability(either, x):
 
 
 # Test that Either obeys the Monad laws.
-
-
 @given(either=eithers(), x=st.integers())
 def test_either_obeys_left_identity(either, x):
     f = lambda a: a * 4
@@ -71,3 +69,14 @@ def test_either_associativity(either):
     f = lambda a: Right(a * 4)
     g = lambda b: Right(b / 2)
     assert ml.monad_respects_associativity(either, f, g)
+
+# Some other basic tests
+def test_flat_map_left_does_nothing():
+    left = Left(1)
+    result = left | (lambda x: Right(x * 2))
+    assert left == result
+
+def test_flat_map_on_right_applies_func():
+    right = Right(1)
+    result = right | (lambda x: Right(x * 2))
+    assert result == Right(2)

@@ -28,9 +28,7 @@ class Monad(Applicative[A], ABC):
 
     def __rshift__(self, mb: Monad[B]) -> Monad[B]:
         """Allows the use of `>>` to sequence operations, ignoring the first arg."""
-        def return_mb(mb):
-            return mb
-        return self.flat_map(return_mb)
+        return mb
 
     def map(self, func: Callable[[A], B]) -> Monad[B]:
         """Map over values in some monad."""
