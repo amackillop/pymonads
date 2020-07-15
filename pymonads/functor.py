@@ -27,6 +27,10 @@ class DataClassMixin(Generic[A]):
 
     value: A
 
+    def __repr__(self):
+        return f"{self.__class__.__name__}({self.value})"
+
+
 
 class Functor(DataClassMixin, Generic[A], ABC):
     """docstring"""

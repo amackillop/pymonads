@@ -18,9 +18,6 @@ T = TypeVar("T")
 class _Either(Monad[A]):
     """"""
 
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.value})"
-
     @classmethod
     def pure(cls, value):
         return Right(value)
