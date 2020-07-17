@@ -27,13 +27,11 @@ class DataClassMixin(Generic[A]):
 
     value: A
 
+class Functor(DataClassMixin[A], ABC):
+    """docstring"""
+
     def __repr__(self):
         return f"{self.__class__.__name__}({self.value})"
-
-
-
-class Functor(DataClassMixin, Generic[A], ABC):
-    """docstring"""
 
     @abstractmethod
     def fmap(self, func: Callable[[A], B]) -> Functor[B]:
