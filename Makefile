@@ -1,6 +1,16 @@
+TAG ?= $(tag)
+
 .PHONY: build
 build:
 	python setup.py sdist bdist_wheel
+
+.PHONY: release
+release:
+ifeq ($(TAG),)
+	echo "Please provide a release tag"
+else
+	twine upload dist/pymonads-$(TAG)*
+endif
 
 
 .PHONY: test
